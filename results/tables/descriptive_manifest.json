@@ -1,0 +1,24 @@
+{
+  "tables": [
+    "acoustic_f1_variance_decomposition.csv",
+    "acoustic_vowel_descriptives.csv",
+    "neural_projection_metrics.csv",
+    "rsm_mantel_sample.csv"
+  ],
+  "figures": [
+    "f1_lobanov_boxplot_by_group.png",
+    "f2_lobanov_boxplot_by_group.png",
+    "intra_speaker_variability_violin.png",
+    "vowel_chart_lobanov.png",
+    "whisper_layer_20_pca2.png",
+    "whisper_layer_20_umap2.png",
+    "whisper_layer_6_pca2.png",
+    "whisper_layer_6_umap2.png",
+    "xlsr_layer_18_pca2.png",
+    "xlsr_layer_18_umap2.png",
+    "xlsr_layer_3_pca2.png",
+    "xlsr_layer_3_umap2.png",
+    "xlsr_layer_9_pca2.png",
+    "xlsr_layer_9_umap2.png"
+  ]
+}

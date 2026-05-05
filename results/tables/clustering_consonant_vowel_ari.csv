@@ -1,0 +1,4 @@
+analysis,representation,metric,linkage,k,ari_consonant_vowel,silhouette,n_phonemes
+consonant_vowel,acoustic,euclidean,ward,2,0.4873417721518987,0.4017186419936331,21
+consonant_vowel,whisper_layer20,cosine,average,2,-0.023936170212765957,0.24794380559947393,21
+consonant_vowel,xlsr_layer18,cosine,average,2,0.6382592928377153,0.3056840112395548,21

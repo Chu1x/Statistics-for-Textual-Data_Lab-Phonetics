@@ -1,0 +1,4 @@
+representation_a,representation_b,spearman_mantel_r,p_value_asymptotic,n_tokens_sampled,n_pairwise_values
+acoustic,whisper_layer20,0.18949486897128262,0.0,3000,4498500
+acoustic,xlsr_layer18,0.35470876430482384,0.0,3000,4498500
+whisper_layer20,xlsr_layer18,0.6763436819883883,0.0,3000,4498500

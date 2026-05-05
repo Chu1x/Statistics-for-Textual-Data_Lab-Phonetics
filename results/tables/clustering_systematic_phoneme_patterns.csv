@@ -1,0 +1,12 @@
+phoneme_label,same_height_cluster_across_representations,same_front_back_cluster_across_representations
+a,False,False
+e,False,False
+i,False,False
+o,True,True
+u,True,True
+y,False,False
+ø,False,False
+œ,False,False
+ɑ,False,False
+ə,False,False
+ɛ,False,False

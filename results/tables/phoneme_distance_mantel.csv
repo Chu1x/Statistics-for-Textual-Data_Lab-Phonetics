@@ -1,0 +1,7 @@
+distance_a,distance_b,mantel_spearman_r,p_value_asymptotic,n_phoneme_pairs
+acoustic_euclidean,acoustic_mahalanobis,0.9835497835497837,4.523572054669851e-41,55
+acoustic_euclidean,whisper_cosine,0.6737373737373739,1.727688846725874e-08,55
+acoustic_euclidean,xlsr_cosine,0.6782828282828284,1.2720453689662636e-08,55
+acoustic_mahalanobis,whisper_cosine,0.6717893217893219,1.9667132397771724e-08,55
+acoustic_mahalanobis,xlsr_cosine,0.6764069264069266,1.4443062439603868e-08,55
+whisper_cosine,xlsr_cosine,0.8423520923520925,7.589198777309096e-16,55

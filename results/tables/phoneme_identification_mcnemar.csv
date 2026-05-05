@@ -1,0 +1,4 @@
+representation_a,representation_b,both_correct,a_correct_b_wrong,a_wrong_b_correct,both_wrong,statistic,p_value
+acoustic,whisper_layer20,4934,756,1874,713,474.406463878327,3.5228923173317235e-105
+acoustic,xlsr_layer18,4931,759,1610,977,304.9810046433094,2.7077430421663076e-68
+whisper_layer20,xlsr_layer18,6048,760,493,976,56.46927374301676,5.708344181373456e-14

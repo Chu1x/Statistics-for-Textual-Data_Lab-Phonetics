@@ -1,0 +1,2 @@
+model,status,reason
+random_slope_l1_by_speaker,not_identifiable,"L1/L2 status is constant within speaker, so a by-speaker random slope for L1 has no within-speaker variation."

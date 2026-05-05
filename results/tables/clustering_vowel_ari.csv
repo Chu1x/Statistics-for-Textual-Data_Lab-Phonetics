@@ -1,0 +1,4 @@
+analysis,representation,metric,linkage,best_k_silhouette,best_silhouette,ari_height_k3,ari_front_back_central_k4,n_phonemes
+vowels,acoustic,euclidean,ward,3,0.458175078358032,0.31058495821727017,0.11962931760741365,11
+vowels,whisper_layer20,cosine,average,6,0.29595787979741867,0.49934980494148246,-0.005484460694698354,11
+vowels,xlsr_layer18,cosine,average,2,0.30904319692563775,0.1154970760233918,0.3049705139005897,11

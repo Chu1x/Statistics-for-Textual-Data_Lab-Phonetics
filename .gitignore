@@ -1,0 +1,27 @@
+# Local/system files
+.DS_Store
+**/.DS_Store
+*.log
+*.tmp
+*~
+.Rhistory
+
+# Python/runtime environments
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Snakemake/local workflow metadata
+.snakemake/
+
+# Raw corpus and large generated neural arrays
+ru-fr_interference/
+data/*.npz
+
+# Assignment prompt and older exports
+2026_phonetics_m1_cl.pdf
+PIPELINE.pdf
+results/report.pdf
+
+# Keep lightweight data tables, scripts, figures, and final reports versioned.

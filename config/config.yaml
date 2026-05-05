@@ -1,0 +1,20 @@
+python: .venv/bin/python
+
+paths:
+  corpus_root: ru-fr_interference/2/wav_et_textgrids/FRcorp_textgrids_only
+  metadata: ru-fr_interference/2/metadata_RUFR.csv
+
+models:
+  whisper: openai/whisper-medium
+  xlsr: facebook/wav2vec2-large-xlsr-53
+
+layers:
+  whisper: [6, 20]
+  xlsr: [3, 9, 18]
+
+runtime:
+  local_files_only: true
+  pca_components: 50
+  random_state: 42
+  permutations: 5000
+  bootstrap: 2000

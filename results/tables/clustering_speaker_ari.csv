@@ -1,0 +1,4 @@
+analysis,representation,metric,linkage,best_k_silhouette,best_silhouette,ari_l1_l2_k2,ari_gender_k2,n_speakers
+speakers,acoustic,euclidean,ward,3,0.11654963258189659,0.08518518518518518,0.2962962962962963,19
+speakers,whisper_layer20,cosine,average,2,0.25391577398043086,1.0,0.2962962962962963,19
+speakers,xlsr_layer18,cosine,average,5,0.21404175053871172,0.2962962962962963,1.0,19
