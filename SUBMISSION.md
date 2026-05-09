@@ -25,13 +25,13 @@
 Dry-run the workflow:
 
 ```bash
-XDG_CACHE_HOME=/private/tmp/snakemake-cache .venv/bin/snakemake -n --cores 1 results/report.md
+XDG_CACHE_HOME=/private/tmp/snakemake-cache .venv/bin/snakemake -n --cores 1 results/report.md results/tables/acoustic_missingness_by_phoneme_group.csv
 ```
 
 Run the workflow:
 
 ```bash
-XDG_CACHE_HOME=/private/tmp/snakemake-cache .venv/bin/snakemake --cores 1 results/report.md
+XDG_CACHE_HOME=/private/tmp/snakemake-cache .venv/bin/snakemake --cores 1 results/report.md results/tables/acoustic_missingness_by_phoneme_group.csv
 ```
 
 Export final PDF and Word report:
@@ -47,5 +47,6 @@ pandoc -f markdown-implicit_figures results/report.md --resource-path=results:. 
 
 - Open `results/report_final.pdf` and inspect the Figures section manually.
 - Confirm the 16 answers are present.
+- Confirm `results/tables/acoustic_missingness_by_phoneme_group.csv` is present.
 - Confirm tables do not overlap in the PDF.
 - Confirm the Figures heading starts on its own page.
