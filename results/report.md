@@ -23,7 +23,7 @@ Main result folders:
 
 ## Methods and Data Quality
 
-After parsing, the working dataset contained 22919 phoneme tokens from 19 speakers and 78 sentence IDs. Acoustic extraction used midpoint formants and, for vowels longer than 80 ms, additional 25% and 75% formant measurements. Formants were Lobanov-normalised within speaker, using vowel tokens only, so that speaker differences in vocal-tract scale did not dominate the vowel comparisons.
+After parsing, the working dataset contained 22919 phoneme tokens from 19 speakers and 78 sentence IDs. Acoustic extraction used Praat/parselmouth Burg LPC formants with `max_number_of_formants = 5`. The maximum formant was 5000 Hz for female speakers and 4500 Hz for male speakers. F1-F3 were measured at each phoneme midpoint; for vowels longer than 80 ms, F1-F3 were also measured at 25% and 75% of the interval. Formants were Lobanov-normalised within speaker, using vowel tokens only, so that speaker differences in vocal-tract scale did not dominate the vowel comparisons.
 
 For the neural analyses, I extracted `openai/whisper-medium` layers 6, 20 and `facebook/wav2vec2-large-xlsr-53` layers 3, 9, 18. Each selected layer was reduced to 50 principal components before downstream modelling. Permutation tests used 5000 permutations, and bootstrap/ROPE summaries used 2000 resamples where applicable.
 
@@ -137,6 +137,8 @@ Rough acoustic range flags:
 
 I did not impute missing acoustic values. Instead, each analysis uses the available tokens for the feature being tested, and the corresponding result tables report the relevant sample sizes. Rough-range values were kept in the main analysis but tracked as quality diagnostics; among oral vowels, the flagged counts were F1 = 16, F2 = 1, and f0 = 32.
 
+Missingness by phoneme class and speaker group is reported in `results/tables/acoustic_missingness_by_phoneme_group.csv`.
+
 As a robustness check, I reran the acoustic L1/L2 tests after excluding rough-range F1/F2 values. This changed 0 of 22 FDR-significance decisions. The affected or filtered contrasts were:
 
 - **sensitivity 1**
@@ -236,9 +238,86 @@ As a robustness check, I reran the acoustic L1/L2 tests after excluding rough-ra
   - `conclusion_changed`: False
   - `absolute_effect_change`: 0.004
 
+## Supplementary outputs and result index
+
+The PDF report gives the main results needed to answer the project questions. Full result tables and supporting figures are included in the submitted folder so that every reported decision can be checked without relying on prose alone.
+
+- `results/tables/acoustic_missingness_by_phoneme_group.csv`
+  - missing acoustic-value proportions by phoneme, L1/L2 group and gender.
+- `results/tables/acoustic_vowel_descriptives.csv`
+  - complete vowel-level acoustic descriptives by speaker group, including mean, median, SD, IQR and CV for F1/F2.
+- `results/tables/acoustic_f1_variance_decomposition.csv`
+  - per-vowel decomposition of F1 variation into total, inter-speaker and intra-speaker components.
+- `results/tables/acoustic_l1_l2_tests.csv`
+  - full acoustic L1/L2 vowel tests with raw p-values and BH-FDR adjusted p-values.
+- `results/tables/gender_residual_tests.csv`
+  - speaker-level residual gender tests after Lobanov normalisation.
+- `results/tables/neural_l1_l2_permutation_whisper_layer20.csv`
+  - Whisper layer 20 L1/L2 permutation tests for vowel contrasts.
+- `results/tables/neural_l1_l2_permutation_xlsr_layer18.csv`
+  - XLS-R layer 18 L1/L2 permutation tests for vowel contrasts.
+- `results/tables/neural_projection_metrics.csv`
+  - PCA/UMAP projection diagnostics for all tested neural layers.
+- `results/tables/rsm_mantel_sample.csv`
+  - sampled representational similarity correlations across acoustic, Whisper and XLS-R token distances.
+- `results/tables/phoneme_distance_mantel.csv`
+  - Mantel correlations between phoneme-centroid distance matrices.
+- `results/tables/selected_pair_distance_bootstrap_ci.csv`
+  - speaker-level bootstrap confidence intervals for selected phoneme-pair distances.
+- `results/tables/phoneme_identification_metrics.csv`
+  - overall and group-specific nearest-centroid identification metrics.
+- `results/tables/phoneme_identification_mcnemar.csv`
+  - matched-pair McNemar comparisons between identification systems.
+- `results/tables/mixed_model_comparisons.csv`
+  - null, main-effects, interaction, extended and likelihood-ratio model-comparison sequence.
+- `results/tables/mixed_model_fixed_effects.csv`
+  - fixed-effect estimates from the extended mixed-effects models.
+- `results/tables/mixed_model_icc_a.csv`
+  - speaker ICC estimates for /a/ in acoustic, Whisper and XLS-R responses.
+- `results/tables/mixed_model_random_slope_note.csv`
+  - documentation of why the by-speaker L1 random slope was not fitted.
+- `results/tables/mixed_model_representation_r2_summary.csv`
+  - marginal and conditional R2 summaries by representation.
+- `results/tables/rope_acoustic_contrasts.csv`
+  - full acoustic ROPE contrast table for F1/F2 in Hz.
+- `results/tables/rope_neural_contrasts_whisper_layer20.csv`
+  - Whisper layer 20 contrast-level ROPE classifications.
+- `results/tables/rope_neural_contrasts_xlsr_layer18.csv`
+  - XLS-R layer 18 contrast-level ROPE classifications.
+- `results/tables/rope_summary.csv`
+  - combined ROPE summary used in the main text.
+- `results/tables/clustering_vowel_ari.csv`
+  - vowel clustering metrics, linkage choices, silhouettes and ARI values.
+- `results/tables/clustering_consonant_vowel_ari.csv`
+  - consonant/vowel clustering ARI and silhouette metrics.
+- `results/tables/clustering_speaker_ari.csv`
+  - speaker clustering results against L1/L2 and gender labels.
+
 ## Descriptive Statistics
 
-The largest 2D between-phoneme variance ratios were observed for:
+The descriptive stage is documented in three layers. The main text reports the most important summaries; the full supporting files are:
+
+- `results/tables/acoustic_vowel_descriptives.csv`
+  - Full mean, median, SD, IQR and CV by vowel and speaker group.
+- `results/tables/acoustic_f1_variance_decomposition.csv`
+  - F1 variance decomposition by vowel.
+- `results/figures/intra_speaker_variability_violin.png`
+  - Intra-speaker variability figure.
+
+For neural representations, `results/tables/neural_projection_metrics.csv` gives PCA/UMAP diagnostics for all tested layers. The submitted projection figures are:
+
+- `results/figures/whisper_layer_6_pca2.png`
+- `results/figures/whisper_layer_6_umap2.png`
+- `results/figures/whisper_layer_20_pca2.png`
+- `results/figures/whisper_layer_20_umap2.png`
+- `results/figures/xlsr_layer_3_pca2.png`
+- `results/figures/xlsr_layer_3_umap2.png`
+- `results/figures/xlsr_layer_9_pca2.png`
+- `results/figures/xlsr_layer_9_umap2.png`
+- `results/figures/xlsr_layer_18_pca2.png`
+- `results/figures/xlsr_layer_18_umap2.png`
+
+The largest 2D between-phoneme variance ratios were:
 
 - **projection 1**
   - `model`: xlsr
@@ -312,7 +391,9 @@ Sampled RSM correlations:
 
 ## Statistical Tests
 
-After BH-FDR correction, acoustic L1/L2 differences persisted for: /i/ f2, /y/ f1, /y/ f2, /u/ f1, /u/ f2, /ø/ f1, /ɛ/ f1, /ɑ/ f1, /ɑ/ f2.
+The complete vowel-level acoustic tests are in `results/tables/acoustic_l1_l2_tests.csv`; this table includes the test used for each contrast and the BH-FDR correction. After BH-FDR correction, 9 of 22 acoustic vowel-feature contrasts were significant: /i/ f2, /y/ f1, /y/ f2, /u/ f1, /u/ f2, /ø/ f1, /ɛ/ f1, /ɑ/ f1, /ɑ/ f2.
+
+Neural L1/L2 permutation tests are reported in `results/tables/neural_l1_l2_permutation_whisper_layer20.csv` and `results/tables/neural_l1_l2_permutation_xlsr_layer18.csv`. Whisper layer 20 had 9 of 11 vowel contrasts significant after BH-FDR correction (/i/, /y/, /u/, /e/, /ø/, /o/, /ɛ/, /a/, /ɑ/); XLS-R layer 18 also had 9 of 11 significant contrasts (/i/, /y/, /u/, /e/, /ø/, /o/, /ɛ/, /a/, /ɑ/).
 
 Phoneme-centroid distance Mantel correlations:
 
@@ -353,7 +434,7 @@ Phoneme-centroid distance Mantel correlations:
   - `p_value_asymptotic`: 0.000
   - `n_phoneme_pairs`: 55
 
-Residual gender-effect tests after Lobanov normalisation found 0 FDR-significant contrasts at alpha = 0.05.
+Residual gender-effect tests after Lobanov normalisation are reported in `results/tables/gender_residual_tests.csv`. They found 0 FDR-significant acoustic contrasts at alpha = 0.05.
 
 ## Midpoint vs Trajectory
 
@@ -427,7 +508,68 @@ Largest changes in L2-L1 effect size:
   - `trajectory_significant_fdr_0_05`: True
   - `conclusion_changed`: False
 
-Nearest-centroid classification:
+## Inter-phoneme Distances and Classification
+
+The Mantel summaries above compare complete phoneme-centroid distance matrices. `results/tables/selected_pair_distance_bootstrap_ci.csv` adds speaker-level bootstrap confidence intervals for selected phoneme pairs; the first rows are:
+
+- **pair 1**
+  - `pair`: e-ɛ
+  - `representation`: acoustic_euclidean
+  - `distance_mean`: 0.311
+  - `ci95_low`: 0.219
+  - `ci95_high`: 0.402
+  - `n_bootstrap`: 1000
+- **pair 2**
+  - `pair`: e-ɛ
+  - `representation`: acoustic_mahalanobis
+  - `distance_mean`: 0.523
+  - `ci95_low`: 0.354
+  - `ci95_high`: 0.694
+  - `n_bootstrap`: 1000
+- **pair 3**
+  - `pair`: e-ɛ
+  - `representation`: whisper_layer20
+  - `distance_mean`: 0.512
+  - `ci95_low`: 0.479
+  - `ci95_high`: 0.543
+  - `n_bootstrap`: 1000
+- **pair 4**
+  - `pair`: e-ɛ
+  - `representation`: xlsr_layer18
+  - `distance_mean`: 0.172
+  - `ci95_low`: 0.155
+  - `ci95_high`: 0.190
+  - `n_bootstrap`: 1000
+- **pair 5**
+  - `pair`: y-u
+  - `representation`: acoustic_euclidean
+  - `distance_mean`: 1.507
+  - `ci95_low`: 1.393
+  - `ci95_high`: 1.617
+  - `n_bootstrap`: 1000
+- **pair 6**
+  - `pair`: y-u
+  - `representation`: acoustic_mahalanobis
+  - `distance_mean`: 2.953
+  - `ci95_low`: 2.738
+  - `ci95_high`: 3.173
+  - `n_bootstrap`: 1000
+- **pair 7**
+  - `pair`: y-u
+  - `representation`: whisper_layer20
+  - `distance_mean`: 0.461
+  - `ci95_low`: 0.420
+  - `ci95_high`: 0.501
+  - `n_bootstrap`: 1000
+- **pair 8**
+  - `pair`: y-u
+  - `representation`: xlsr_layer18
+  - `distance_mean`: 0.441
+  - `ci95_low`: 0.399
+  - `ci95_high`: 0.487
+  - `n_bootstrap`: 1000
+
+Nearest-centroid classification results are in `results/tables/phoneme_identification_metrics.csv`. The table includes overall metrics and, where present, separate L1/L2 rows:
 
 - **classifier 1**
   - `representation`: acoustic
@@ -486,9 +628,245 @@ Nearest-centroid classification:
 
 The best phoneme identification accuracy was obtained by `whisper_layer20` with accuracy 0.823.
 
+Matched-pair classifier comparisons are reported in `results/tables/phoneme_identification_mcnemar.csv`. In that table, 3 of 3 McNemar tests have p < 0.05:
+
+- **mcnemar 1**
+  - `representation_a`: acoustic
+  - `representation_b`: whisper_layer20
+  - `both_correct`: 4934
+  - `a_correct_b_wrong`: 756
+  - `a_wrong_b_correct`: 1874
+  - `both_wrong`: 713
+  - `statistic`: 474.406
+  - `p_value`: 0.000
+- **mcnemar 2**
+  - `representation_a`: acoustic
+  - `representation_b`: xlsr_layer18
+  - `both_correct`: 4931
+  - `a_correct_b_wrong`: 759
+  - `a_wrong_b_correct`: 1610
+  - `both_wrong`: 977
+  - `statistic`: 304.981
+  - `p_value`: 0.000
+- **mcnemar 3**
+  - `representation_a`: whisper_layer20
+  - `representation_b`: xlsr_layer18
+  - `both_correct`: 6048
+  - `a_correct_b_wrong`: 760
+  - `a_wrong_b_correct`: 493
+  - `both_wrong`: 976
+  - `statistic`: 56.469
+  - `p_value`: 0.000
+
 ## Mixed-Effects Models
 
-ICC for /a/:
+`results/tables/mixed_model_comparisons.csv` reports the null, main-effects, full-interaction and extended model-building sequence, together with likelihood-ratio comparisons. These nested model comparisons were fitted with maximum likelihood rather than REML in the analysis code. A compact excerpt is:
+
+- **model 1**
+  - `representation`: acoustic
+  - `response`: f1_lobanov
+  - `comparison`: null_model_vs_main_effects
+  - `lr_statistic`: 0.000
+  - `raw_lr_statistic`: -5.851
+  - `lrt_note`: optimizer_nonmonotonic
+  - `df`: 2.000
+  - `p_value`: 1.000
+- **model 2**
+  - `representation`: acoustic
+  - `response`: f1_lobanov
+  - `comparison`: main_effects_vs_full_interaction
+  - `lr_statistic`: 5.286
+  - `raw_lr_statistic`: 5.286
+  - `lrt_note`: overall
+  - `df`: 1.000
+  - `p_value`: 0.022
+- **model 3**
+  - `representation`: acoustic
+  - `response`: f1_lobanov
+  - `comparison`: full_interaction_vs_extended_height
+  - `lr_statistic`: 7586.933
+  - `raw_lr_statistic`: 7586.933
+  - `lrt_note`: overall
+  - `df`: 2.000
+  - `p_value`: 0.000
+- **model 4**
+  - `representation`: acoustic
+  - `response`: f2_lobanov
+  - `comparison`: null_model_vs_main_effects
+  - `lr_statistic`: 0.000
+  - `raw_lr_statistic`: -6.584
+  - `lrt_note`: optimizer_nonmonotonic
+  - `df`: 2.000
+  - `p_value`: 1.000
+- **model 5**
+  - `representation`: acoustic
+  - `response`: f2_lobanov
+  - `comparison`: main_effects_vs_full_interaction
+  - `lr_statistic`: 7.610
+  - `raw_lr_statistic`: 7.610
+  - `lrt_note`: overall
+  - `df`: 1.000
+  - `p_value`: 0.006
+- **model 6**
+  - `representation`: acoustic
+  - `response`: f2_lobanov
+  - `comparison`: full_interaction_vs_extended_height
+  - `lr_statistic`: 2510.152
+  - `raw_lr_statistic`: 2510.152
+  - `lrt_note`: overall
+  - `df`: 2.000
+  - `p_value`: 0.000
+- **model 7**
+  - `representation`: whisper_layer20
+  - `response`: whisper_pc1
+  - `comparison`: null_model_vs_main_effects
+  - `lr_statistic`: 1.019
+  - `raw_lr_statistic`: 1.019
+  - `lrt_note`: overall
+  - `df`: 2.000
+  - `p_value`: 0.601
+- **model 8**
+  - `representation`: whisper_layer20
+  - `response`: whisper_pc1
+  - `comparison`: main_effects_vs_full_interaction
+  - `lr_statistic`: 0.020
+  - `raw_lr_statistic`: 0.020
+  - `lrt_note`: overall
+  - `df`: 1.000
+  - `p_value`: 0.887
+- **model 9**
+  - `representation`: whisper_layer20
+  - `response`: whisper_pc1
+  - `comparison`: full_interaction_vs_extended_height
+  - `lr_statistic`: 6339.167
+  - `raw_lr_statistic`: 6339.167
+  - `lrt_note`: overall
+  - `df`: 2.000
+  - `p_value`: 0.000
+- **model 10**
+  - `representation`: whisper_layer20
+  - `response`: whisper_pc2
+  - `comparison`: null_model_vs_main_effects
+  - `lr_statistic`: 11.072
+  - `raw_lr_statistic`: 11.072
+  - `lrt_note`: overall
+  - `df`: 2.000
+  - `p_value`: 0.004
+- **model 11**
+  - `representation`: whisper_layer20
+  - `response`: whisper_pc2
+  - `comparison`: main_effects_vs_full_interaction
+  - `lr_statistic`: 0.174
+  - `raw_lr_statistic`: 0.174
+  - `lrt_note`: overall
+  - `df`: 1.000
+  - `p_value`: 0.677
+- **model 12**
+  - `representation`: whisper_layer20
+  - `response`: whisper_pc2
+  - `comparison`: full_interaction_vs_extended_height
+  - `lr_statistic`: 48.737
+  - `raw_lr_statistic`: 48.737
+  - `lrt_note`: overall
+  - `df`: 2.000
+  - `p_value`: 0.000
+
+`results/tables/mixed_model_fixed_effects.csv` reports fixed-effect estimates from the extended models. The first rows are:
+
+- **fixed 1**
+  - `representation`: acoustic
+  - `response`: f1_lobanov
+  - `model`: extended_height
+  - `term`: Intercept
+  - `estimate`: -0.909
+  - `std_error`: 0.023
+  - `z_value`: -39.194
+  - `p_value`: 0.000
+- **fixed 2**
+  - `representation`: acoustic
+  - `response`: f1_lobanov
+  - `model`: extended_height
+  - `term`: C(vowel_height)[T.low]
+  - `estimate`: 1.674
+  - `std_error`: 0.015
+  - `z_value`: 111.020
+  - `p_value`: 0.000
+- **fixed 3**
+  - `representation`: acoustic
+  - `response`: f1_lobanov
+  - `model`: extended_height
+  - `term`: C(vowel_height)[T.mid]
+  - `estimate`: 0.746
+  - `std_error`: 0.023
+  - `z_value`: 32.884
+  - `p_value`: 0.000
+- **fixed 4**
+  - `representation`: acoustic
+  - `response`: f1_lobanov
+  - `model`: extended_height
+  - `term`: l2
+  - `estimate`: -0.014
+  - `std_error`: 0.024
+  - `z_value`: -0.585
+  - `p_value`: 0.559
+- **fixed 5**
+  - `representation`: acoustic
+  - `response`: f1_lobanov
+  - `model`: extended_height
+  - `term`: male
+  - `estimate`: -0.019
+  - `std_error`: 0.024
+  - `z_value`: -0.770
+  - `p_value`: 0.441
+- **fixed 6**
+  - `representation`: acoustic
+  - `response`: f1_lobanov
+  - `model`: extended_height
+  - `term`: l2:male
+  - `estimate`: -0.009
+  - `std_error`: 0.034
+  - `z_value`: -0.266
+  - `p_value`: 0.790
+- **fixed 7**
+  - `representation`: acoustic
+  - `response`: f2_lobanov
+  - `model`: extended_height
+  - `term`: Intercept
+  - `estimate`: 0.594
+  - `std_error`: 0.031
+  - `z_value`: 18.973
+  - `p_value`: 0.000
+- **fixed 8**
+  - `representation`: acoustic
+  - `response`: f2_lobanov
+  - `model`: extended_height
+  - `term`: C(vowel_height)[T.low]
+  - `estimate`: -1.074
+  - `std_error`: 0.020
+  - `z_value`: -52.787
+  - `p_value`: 0.000
+- **fixed 9**
+  - `representation`: acoustic
+  - `response`: f2_lobanov
+  - `model`: extended_height
+  - `term`: C(vowel_height)[T.mid]
+  - `estimate`: -0.284
+  - `std_error`: 0.031
+  - `z_value`: -9.273
+  - `p_value`: 0.000
+- **fixed 10**
+  - `representation`: acoustic
+  - `response`: f2_lobanov
+  - `model`: extended_height
+  - `term`: l2
+  - `estimate`: -0.003
+  - `std_error`: 0.032
+  - `z_value`: -0.105
+  - `p_value`: 0.916
+
+`results/tables/mixed_model_random_slope_note.csv` documents the random-slope decision: L1/L2 status is constant within speaker, so a by-speaker random slope for L1 has no within-speaker variation.
+
+ICC for /a/ is reported in `results/tables/mixed_model_icc_a.csv`:
 
 - **icc 1**
   - `phoneme_label`: a
@@ -515,7 +893,7 @@ ICC for /a/:
   - `residual_variance`: 602.057
   - `icc`: 0.031
 
-Marginal and conditional R2 summary:
+Marginal and conditional R2 are summarised in `results/tables/mixed_model_representation_r2_summary.csv`:
 
 - **r2 1**
   - `representation`: acoustic
@@ -540,6 +918,8 @@ The highest mean marginal R2 was obtained by `acoustic` with mean marginal R2 0.
 
 ## Confidence Intervals and ROPE
 
+The full contrast-level ROPE classifications are in `results/tables/rope_acoustic_contrasts.csv`, `results/tables/rope_neural_contrasts_whisper_layer20.csv`, `results/tables/rope_neural_contrasts_xlsr_layer18.csv`, and the combined `results/tables/rope_summary.csv`. The corresponding forest plots are `results/figures/forest_acoustic_f1_rope.png`, `results/figures/forest_acoustic_f2_rope.png`, `results/figures/forest_whisper_layer20_rope.png`, and `results/figures/forest_xlsr_layer18_rope.png`.
+
 ROPE classification counts:
 
 - acoustic_f1: Indeterminate = 8
@@ -554,6 +934,8 @@ ROPE classification counts:
 Acoustic F1 used the default [-20, +20] Hz ROPE. Neural ROPEs used the intra-speaker cosine-distance noise floor. The acoustic CI implementation is a speaker-level interval approximation rather than a strict profile-likelihood interval, so ROPE classifications should be interpreted as transparent robustness summaries rather than exact profile-likelihood decisions.
 
 ## Hierarchical Clustering
+
+Acoustic clustering used Euclidean distances with Ward linkage. Neural clustering used cosine distances with average linkage, as recorded in the clustering tables. This is a deliberate deviation from Ward for the neural spaces: Ward's criterion is Euclidean, so average linkage was used for cosine-based neural distances.
 
 Vowel clustering:
 
@@ -655,7 +1037,7 @@ Best vowel-height recovery: `whisper_layer20` with ARI 0.499.
 Best front/back/central recovery: `xlsr_layer18` with ARI 0.305.
 Best consonant/vowel boundary recovery: `xlsr_layer18` with ARI 0.638.
 
-Systematically difficult consonants included /l/, /n/, /ʁ/, consistent with sonorants behaving as acoustically intermediate categories.
+Systematically difficult consonants included /l/, /n/, /ʁ/; the supporting counts are in `results/tables/clustering_consonant_vowel_misclustered.csv`.
 
 ## Answers to the 16 Questions
 
@@ -663,18 +1045,27 @@ Systematically difficult consonants included /l/, /n/, /ʁ/, consistent with son
 2. The acoustic summaries point to /ɑ/, /u/, /y/, and /ɛ/ as especially variable categories. The neural spaces show related structure, but not a one-to-one copy of the formant space, which is unsurprising because the embeddings also carry context and speaker information.
 3. The UMAP plots show clear phoneme neighbourhoods, particularly for XLS-R, but they do not reproduce the IPA vowel trapezoid exactly. In other words, the neural space is phonetically organised, but not simply an F1/F2 chart in another form.
 4. The RSM results support the same interpretation. Acoustic-XLS-R similarity was higher than acoustic-Whisper similarity, r = 0.355 versus r = 0.189, while Whisper and XLS-R were more similar to each other, r = 0.676.
-5. In the acoustic tests, 9 contrasts survived FDR correction, involving /i/, /y/, /u/, /ø/, /ɛ/, and /ɑ/. Whisper and XLS-R also showed widespread L1/L2 separation, with 9 significant vowel-level neural contrasts each. The main exception was /œ/, where the corpus simply does not provide enough data, and /ə/, which was not significant.
+5. In the acoustic tests, 9 contrasts survived FDR correction, involving /i/, /y/, /u/, /ø/, /ɛ/, and /ɑ/. Whisper and XLS-R each had 9 significant vowel-level neural contrasts after FDR correction. The main exception was /œ/, where the corpus simply does not provide enough data, and /ə/, which was not significant.
 6. Euclidean and Mahalanobis acoustic distances gave almost the same vowel-distance ranking, r = 0.984. The acoustic-neural correlations were moderate and very similar for Whisper and XLS-R, while the two neural distance matrices were more closely aligned with each other, r = 0.842.
-7. Whisper layer 20 was the best phoneme classifier in the leave-one-speaker-out test, with accuracy 0.823 and macro-F1 0.735. XLS-R layer 18 followed at 0.790 accuracy, and the acoustic baseline reached 0.687. The McNemar comparisons suggest that these differences are not just noise.
+7. Whisper layer 20 was the best phoneme classifier in the leave-one-speaker-out test, with accuracy 0.823 and macro-F1 0.735. XLS-R layer 18 followed at 0.790 accuracy, and the acoustic baseline reached 0.687. `results/tables/phoneme_identification_mcnemar.csv` reports matched-pair McNemar tests for these classifier differences; all three pairwise p-values in that table are below 0.05.
 8. The /a/ models show only modest speaker-specificity: ICC = 0.038 for acoustic F1, 0.042 for Whisper PC1, and 0.031 for XLS-R PC1. Most of the remaining variation is therefore token-level or residual rather than stable between-speaker variation.
-9. I did not find a broad L1-by-gender pattern. The interaction was not significant for acoustic F1/F2 or for Whisper PCs 1-5. The one exception was XLS-R PC2, estimate = 6.649, p = 0.031, which suggests a local gender-related effect in that neural dimension.
+9. The gender results depend on which analysis is used. The speaker-level residual tests after Lobanov normalisation found 0 FDR-significant acoustic contrasts, so there is no broad residual gender pattern in `results/tables/gender_residual_tests.csv`. The mixed-model comparison table still reports some significant L1-by-gender interaction tests for acoustic responses, so I treat this as a model-specific interaction rather than as a simple across-vowel residual gender effect. In the fixed-effect estimates, the clearest neural interaction noted in the report is XLS-R PC2, estimate = 6.649, p = 0.031.
 10. The mixed-effects models gave the highest mean marginal R2 to the acoustic features, 0.430. XLS-R layer 18 was close behind at 0.410, while Whisper layer 20 was lower at 0.310. This fits the idea that formants are more directly tied to the fixed vowel predictors, whereas neural PCs contain additional information.
 11. I did not find a case where a statistically significant acoustic F1 effect was also clearly inside the acoustic ROPE. The acoustic ROPE results are therefore better read as a mix of non-equivalent and indeterminate contrasts, rather than as evidence for practically negligible formant differences.
 12. The ROPE results differ quite sharply across representations. Acoustic F1 produced 2 non-equivalent, 8 indeterminate, and 1 insufficient contrast. Whisper produced 10 equivalent contrasts and 1 insufficient case. XLS-R sat between them, with 6 equivalent, 4 indeterminate, and 1 insufficient contrast.
 13. This disagreement is meaningful rather than contradictory. Formants isolate narrow articulatory differences, while neural cosine distances pool phonetic detail with context, speaker, and model-specific information. A contrast can therefore be acoustically robust while still falling within the neural noise floor.
 14. The clustering results split the phonological structure across models. Whisper layer 20 recovered vowel height best, ARI = 0.499. XLS-R layer 18 recovered front/back/central grouping best, ARI = 0.305. The acoustic representation had the clearest vowel-clustering silhouette, but not the strongest height ARI.
-15. Speaker clustering revealed strong group information in the neural spaces. Whisper layer 20 separated L1/L2 perfectly at k = 2, ARI = 1.000, while XLS-R layer 18 separated gender perfectly, ARI = 1.000. This is useful, but it also means the neural embeddings should not be treated as purely phonetic.
+15. Speaker clustering revealed strong group information in the neural spaces. Whisper layer 20 separated L1/L2 perfectly at k = 2, ARI = 1.000, while XLS-R layer 18 separated gender perfectly, ARI = 1.000. Because this speaker-level analysis has only 19 speakers, these perfect ARI values should be treated as descriptive evidence rather than a large-sample generalisation.
 16. For consonant/vowel clustering, XLS-R layer 18 performed best, ARI = 0.638, followed by the acoustic representation at 0.487. Whisper layer 20 was near chance, ARI = -0.024. The recurrently difficult consonants were /l/, /n/, and /ʁ/, which makes phonetic sense because sonorants and rhotics sit closer to vowels than obstruents do.
+
+## Limitations
+
+- The corpus contains 19 speakers, so speaker-level clustering and mixed-effects summaries should be interpreted cautiously.
+- RSM computation used a sampled token set, as reported in `results/tables/rsm_mantel_sample.csv`, rather than all possible corpus tokens.
+- Acoustic ROPE intervals are speaker-level approximations rather than strict profile-likelihood confidence intervals.
+- Neural clustering used average linkage for cosine distances because Ward linkage is tied to Euclidean geometry.
+- Perfect ARI values in speaker clustering are descriptive and should be interpreted cautiously because `n_speakers = 19`.
+- Missingness and acoustic quality handling rely on available-case analysis and rough range flags, not imputation or manual correction.
 
 ## Reproducibility
 

@@ -15,6 +15,7 @@ rule all:
         "data/features_whisper_pca.npz",
         "data/features_xlsr.npz",
         "data/features_xlsr_pca.npz",
+        "results/tables/acoustic_missingness_by_phoneme_group.csv",
         "results/report.md",
 
 
@@ -214,6 +215,7 @@ rule write_report:
         rope="results/tables/rope_summary.csv",
         clustering="results/tables/clustering_vowel_ari.csv",
     output:
-        "results/report.md",
+        report="results/report.md",
+        missingness_by_group="results/tables/acoustic_missingness_by_phoneme_group.csv",
     shell:
-        "{PYTHON} src/write_report.py --output '{output}'"
+        "{PYTHON} src/write_report.py --output '{output.report}'"
