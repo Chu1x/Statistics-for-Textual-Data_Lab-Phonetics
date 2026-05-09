@@ -216,7 +216,7 @@ def build_report() -> str:
 
 ## Overview
 
-This report summarises the reproducible pipeline for the Russian-French Interference Corpus. The pipeline parsed TextGrid annotations, extracted acoustic features, extracted Whisper and XLS-R hidden-state representations, normalised features, ran statistical tests, fitted mixed-effects models, evaluated ROPE classifications, and performed hierarchical clustering.
+This project asks how far acoustic measurements and neural speech representations tell the same story about phonetic structure in the Russian-French Interference Corpus. I treated the corpus as a phoneme-level dataset: TextGrid intervals were converted into token rows, acoustic descriptors were measured at aligned intervals, Whisper and XLS-R hidden states were averaged over the same intervals, and the resulting representations were compared with descriptive, inferential, and clustering analyses.
 
 ## Pipeline Outputs
 
@@ -237,9 +237,9 @@ Main result folders:
 
 ## Methods and Data Quality
 
-The parsed corpus contains {n_tokens} phoneme tokens from {n_speakers} speakers and {n_sentences} sentence IDs. Acoustic extraction used midpoint formants and, for vowels longer than 80 ms, additional 25% and 75% formant measurements. Vowels were Lobanov-normalised within speaker using vowel tokens only.
+After parsing, the working dataset contained {n_tokens} phoneme tokens from {n_speakers} speakers and {n_sentences} sentence IDs. Acoustic extraction used midpoint formants and, for vowels longer than 80 ms, additional 25% and 75% formant measurements. Formants were Lobanov-normalised within speaker, using vowel tokens only, so that speaker differences in vocal-tract scale did not dominate the vowel comparisons.
 
-Whisper embeddings used `{config["models"]["whisper"]}` layers {whisper_layers}. XLS-R embeddings used `{config["models"]["xlsr"]}` layers {xlsr_layers}. Neural representations were reduced to {config["runtime"]["pca_components"]} principal components per selected layer for downstream analyses. Statistical tests used {config["runtime"]["permutations"]} permutations where applicable and ROPE/bootstrap summaries used {config["runtime"]["bootstrap"]} bootstrap samples where applicable.
+For the neural analyses, I extracted `{config["models"]["whisper"]}` layers {whisper_layers} and `{config["models"]["xlsr"]}` layers {xlsr_layers}. Each selected layer was reduced to {config["runtime"]["pca_components"]} principal components before downstream modelling. Permutation tests used {config["runtime"]["permutations"]} permutations, and bootstrap/ROPE summaries used {config["runtime"]["bootstrap"]} resamples where applicable.
 
 Missing-value summary by analysis-relevant token set:
 
@@ -249,9 +249,9 @@ Rough acoustic range flags:
 
 {_long_table(quality_display, "quality")}
 
-Missing acoustic values were not imputed. Analyses used pairwise exclusion for the feature being tested, so each result table reports the available sample size for that feature and contrast. Rough-range flags were retained rather than automatically removed; among oral vowels, flagged counts were F1 = {oral_f1_flags}, F2 = {oral_f2_flags}, and f0 = {oral_f0_flags}. These flags are treated as quality diagnostics, not as exclusions from the main formant analyses.
+I did not impute missing acoustic values. Instead, each analysis uses the available tokens for the feature being tested, and the corresponding result tables report the relevant sample sizes. Rough-range values were kept in the main analysis but tracked as quality diagnostics; among oral vowels, the flagged counts were F1 = {oral_f1_flags}, F2 = {oral_f2_flags}, and f0 = {oral_f0_flags}.
 
-Acoustic L1/L2 sensitivity check after excluding rough-range F1/F2 flags changed {sensitivity_changed} of {sensitivity_total} FDR-significance decisions. Affected or filtered contrasts:
+As a robustness check, I reran the acoustic L1/L2 tests after excluding rough-range F1/F2 values. This changed {sensitivity_changed} of {sensitivity_total} FDR-significance decisions. The affected or filtered contrasts were:
 
 {_long_table(sensitivity_display, "sensitivity")}
 
@@ -331,22 +331,22 @@ Systematically difficult consonants included {systematic_labels}, consistent wit
 
 ## Answers to the 16 Questions
 
-1. PCA and UMAP answered different parts of the projection question. PCA gave a linear, variance-preserving baseline whose 2D between-phoneme variance ratios were high for several layers, especially XLS-R layer 18. UMAP was more useful as a neighbourhood visualisation, but it is less directly interpretable because distances and axes are not linear acoustic or articulatory dimensions.
-2. The most variable vowels in the acoustic summaries were concentrated among low/back and high rounded categories, especially /ɑ/, /u/, /y/, and /ɛ/. This partly matches the neural spaces, but the neural embeddings also preserve contextual, speaker, and language-background information, so acoustic dispersion and neural dispersion are related rather than identical.
-3. The UMAP plots recover phoneme neighbourhoods, especially for XLS-R, but they do not perfectly reconstruct the IPA vowel trapezoid. This is expected because the embeddings are learned from speech signal prediction/recognition objectives rather than from explicit F1/F2 geometry.
-4. RSM/Mantel correlations showed stronger acoustic alignment for XLS-R than Whisper: acoustic-Whisper r = 0.189, acoustic-XLS-R r = 0.355, and Whisper-XLS-R r = 0.676 on the sampled token similarity matrices. The two neural models are therefore more similar to each other than either is to the acoustic F1/F2 space.
-5. Acoustic L1/L2 tests found 9 FDR-significant contrasts across /i/, /y/, /u/, /ø/, /ɛ/, and /ɑ/. Whisper and XLS-R each found 9 significant vowel-level neural contrasts; /œ/ had insufficient data and /ə/ was not significant. On long-vowel subsets, replacing midpoint formants with 25%/75% trajectory means changed {trajectory_changed} of {trajectory_total} FDR decisions, so trajectory information matters for some vowels.
-6. Acoustic Euclidean and Mahalanobis centroid distances were nearly identical in rank structure, r = 0.984. Acoustic-neural centroid correlations were moderate and similar for Whisper and XLS-R, r = 0.674 and r = 0.678 respectively for Euclidean acoustic distance, while Whisper-XLS-R centroid distance correlation was stronger, r = 0.842.
-7. Leave-one-speaker-out nearest-centroid classification was best for Whisper layer 20, with overall accuracy {_fmt(best_identification.overall_accuracy)} and macro-F1 0.735. XLS-R layer 18 followed with accuracy 0.790, and acoustic F1/F2 reached 0.687. McNemar tests showed all pairwise classifier differences were significant.
-8. For /a/, speaker-specificity was modest in all representations: ICC = 0.038 for acoustic F1, 0.042 for Whisper PC1, and 0.031 for XLS-R PC1. This indicates that most /a/ variation is token-level or residual rather than speaker-level in these fitted models.
-9. The L1 x Gender interaction was not significant for acoustic F1/F2 or Whisper PCs 1-5. In XLS-R, PC2 showed a significant interaction, estimate = 6.649, p = 0.031, so gender-related structure appears in one neural dimension but is not a broad cross-representation pattern.
-10. Mixed-effects model summaries gave the highest mean marginal R2 to acoustic features, {_fmt(best_r2.mean_marginal_r2)}, followed by XLS-R layer 18 at 0.410 and Whisper layer 20 at 0.310. Acoustic F1/F2 therefore captured the fixed phonetic predictors most directly, while neural PCs retained additional non-phoneme variance.
-11. No statistically significant acoustic F1 contrast had a 95% speaker-level CI fully inside the acoustic ROPE. The current acoustic ROPE result is therefore not a case of "statistically significant but practically equivalent"; instead, several contrasts were indeterminate and two acoustic F1 contrasts were non-equivalent.
-12. ROPE classifications differed by representation: acoustic F1 had 2 non-equivalent, 8 indeterminate, and 1 insufficient contrast; Whisper had 10 equivalent and 1 insufficient contrast; XLS-R had 6 equivalent, 4 indeterminate, and 1 insufficient contrast. Whisper therefore produced the strongest practical-equivalence pattern under the chosen neural ROPE.
-13. Acoustic and neural ROPE disagreement is interpretable because the acoustic tests target narrow formant shifts, while neural cosine distances average broader phonetic, contextual, and speaker-conditioned information. A small formant change can be robust acoustically while remaining within the neural within-speaker noise floor.
-14. Clustering results separated different phonological structures by representation. Whisper layer 20 best recovered vowel height, ARI = 0.499; XLS-R layer 18 best recovered front/back/central grouping, ARI = 0.305; acoustic F1/F2 gave the clearest silhouette for vowel clustering but a lower height ARI than Whisper.
-15. Speaker clustering showed strong representation-specific biases. Whisper layer 20 perfectly separated L1/L2 at k = 2, ARI = 1.000, whereas XLS-R layer 18 perfectly separated gender, ARI = 1.000. These results warn that neural embeddings encode speaker and group information in addition to phonetic identity.
-16. Consonant/vowel clustering was best for XLS-R layer 18, ARI = 0.638, followed by acoustic features at 0.487; Whisper layer 20 was near chance, ARI = -0.024. The systematically difficult consonants were /l/, /n/, and /ʁ/, consistent with sonorants and rhotics behaving as acoustically intermediate categories.
+1. PCA and UMAP were useful in different ways. PCA gave a stable linear baseline, and the strongest 2D separation appeared in the higher XLS-R layers. UMAP made local phoneme neighbourhoods easier to see, but I do not interpret its axes as acoustic dimensions.
+2. The acoustic summaries point to /ɑ/, /u/, /y/, and /ɛ/ as especially variable categories. The neural spaces show related structure, but not a one-to-one copy of the formant space, which is unsurprising because the embeddings also carry context and speaker information.
+3. The UMAP plots show clear phoneme neighbourhoods, particularly for XLS-R, but they do not reproduce the IPA vowel trapezoid exactly. In other words, the neural space is phonetically organised, but not simply an F1/F2 chart in another form.
+4. The RSM results support the same interpretation. Acoustic-XLS-R similarity was higher than acoustic-Whisper similarity, r = 0.355 versus r = 0.189, while Whisper and XLS-R were more similar to each other, r = 0.676.
+5. In the acoustic tests, 9 contrasts survived FDR correction, involving /i/, /y/, /u/, /ø/, /ɛ/, and /ɑ/. Whisper and XLS-R also showed widespread L1/L2 separation, with 9 significant vowel-level neural contrasts each. The main exception was /œ/, where the corpus simply does not provide enough data, and /ə/, which was not significant.
+6. Euclidean and Mahalanobis acoustic distances gave almost the same vowel-distance ranking, r = 0.984. The acoustic-neural correlations were moderate and very similar for Whisper and XLS-R, while the two neural distance matrices were more closely aligned with each other, r = 0.842.
+7. Whisper layer 20 was the best phoneme classifier in the leave-one-speaker-out test, with accuracy {_fmt(best_identification.overall_accuracy)} and macro-F1 0.735. XLS-R layer 18 followed at 0.790 accuracy, and the acoustic baseline reached 0.687. The McNemar comparisons suggest that these differences are not just noise.
+8. The /a/ models show only modest speaker-specificity: ICC = 0.038 for acoustic F1, 0.042 for Whisper PC1, and 0.031 for XLS-R PC1. Most of the remaining variation is therefore token-level or residual rather than stable between-speaker variation.
+9. I did not find a broad L1-by-gender pattern. The interaction was not significant for acoustic F1/F2 or for Whisper PCs 1-5. The one exception was XLS-R PC2, estimate = 6.649, p = 0.031, which suggests a local gender-related effect in that neural dimension.
+10. The mixed-effects models gave the highest mean marginal R2 to the acoustic features, {_fmt(best_r2.mean_marginal_r2)}. XLS-R layer 18 was close behind at 0.410, while Whisper layer 20 was lower at 0.310. This fits the idea that formants are more directly tied to the fixed vowel predictors, whereas neural PCs contain additional information.
+11. I did not find a case where a statistically significant acoustic F1 effect was also clearly inside the acoustic ROPE. The acoustic ROPE results are therefore better read as a mix of non-equivalent and indeterminate contrasts, rather than as evidence for practically negligible formant differences.
+12. The ROPE results differ quite sharply across representations. Acoustic F1 produced 2 non-equivalent, 8 indeterminate, and 1 insufficient contrast. Whisper produced 10 equivalent contrasts and 1 insufficient case. XLS-R sat between them, with 6 equivalent, 4 indeterminate, and 1 insufficient contrast.
+13. This disagreement is meaningful rather than contradictory. Formants isolate narrow articulatory differences, while neural cosine distances pool phonetic detail with context, speaker, and model-specific information. A contrast can therefore be acoustically robust while still falling within the neural noise floor.
+14. The clustering results split the phonological structure across models. Whisper layer 20 recovered vowel height best, ARI = 0.499. XLS-R layer 18 recovered front/back/central grouping best, ARI = 0.305. The acoustic representation had the clearest vowel-clustering silhouette, but not the strongest height ARI.
+15. Speaker clustering revealed strong group information in the neural spaces. Whisper layer 20 separated L1/L2 perfectly at k = 2, ARI = 1.000, while XLS-R layer 18 separated gender perfectly, ARI = 1.000. This is useful, but it also means the neural embeddings should not be treated as purely phonetic.
+16. For consonant/vowel clustering, XLS-R layer 18 performed best, ARI = 0.638, followed by the acoustic representation at 0.487. Whisper layer 20 was near chance, ARI = -0.024. The recurrently difficult consonants were /l/, /n/, and /ʁ/, which makes phonetic sense because sonorants and rhotics sit closer to vowels than obstruents do.
 
 ## Reproducibility
 
@@ -384,7 +384,7 @@ The workflow parameters are stored in `config/config.yaml`.
 
 ## Figures
 
-Figures are placed at the end to avoid interrupting long result listings in the PDF layout.
+Figures are grouped here so that they do not interrupt the long result listings in the main text.
 
 \\Needspace{{0.42\\textheight}}
 **Figure 1. F1 by vowel and L1/L2 group**
