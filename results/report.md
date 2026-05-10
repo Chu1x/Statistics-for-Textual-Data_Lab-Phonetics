@@ -1,5 +1,10 @@
 # Acoustic and Neural Representations in a Phonetically Aligned Corpus
 
+
+
+## GitHub Link
+https://github.com/Chu1x/Statistics-for-Textual-Data_Lab-Phonetics
+
 ## Overview
 
 This project asks how far acoustic measurements and neural speech representations tell the same story about phonetic structure in the Russian-French Interference Corpus. I treated the corpus as a phoneme-level dataset: TextGrid intervals were converted into token rows, acoustic descriptors were measured at aligned intervals, Whisper and XLS-R hidden states were averaged over the same intervals, and the resulting representations were compared with descriptive, inferential, and clustering analyses.
@@ -1103,7 +1108,7 @@ The workflow parameters are stored in `config/config.yaml`.
 
 ## Figures
 
-Figures are grouped here so that they do not interrupt the long result listings in the main text.
+The main figures are grouped here so that they do not interrupt the long result listings in the main text. Please find the complete set of graphic results in the submitted .zip file or on GitHub.
 
 \Needspace{0.42\textheight}
 **Figure 1. F1 by vowel and L1/L2 group**
